@@ -3,7 +3,7 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const path = url.pathname;
 
-  // --- 1. 静态资源与主页放行 ---
+  // --- 1. 静态资源与主页放行 ---GitHub根深地固
   // 如果访问的是根目录，或者路径包含点（如 .html, .css, .js, .png）
   // 则跳过后端逻辑，直接去 public 文件夹找文件
   if (path === "/" || path.includes(".")) {
