@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>捡瓶子</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>🎁 捡瓶子</h1>
+<button id="pickBtn">捡一个瓶子</button>
+<div id="result"></div>
+
+<script>
+document.getElementById('pickBtn').onclick = async () => {
+  const res = await fetch('/api/pick');
+  const data = await res.json();
+  let html = `<p>${data.content}</p><p><small>${data.created_at}</small></p>`;
+  if (data.image_base64) {
+    html += `<img src="data:image/png;base64,${data.image_base64}" style="max-width:200px;">`;
+  }
+  document.getElementById('result').innerHTML = html;
+};
+</script>
+</body>
+</html>

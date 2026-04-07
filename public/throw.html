@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>扔瓶子</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ <h1>📝 扔瓶子</h1>
+<form id="throwForm" enctype="multipart/form-data">
+  <textarea id="content" placeholder="写下你的瓶子内容..."></textarea><br>
+  <input type="file" id="image" accept="image/*"><br>
+  <button type="submit">扔出去</button>
+</form>
+<div id="result"></div>
+
+<script>
+document.getElementById('throwForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const formData = new FormData();
+  formData.append("content", document.getElementById('content').value);
+  const file = document.getElementById('image').files[0];
+  if (file) formData.append("image", file);
+
+  const res = await fetch('/api/throw', { method: 'POST', body: formData });
+  document.getElementById('result').innerText = await res.text();
+};
+</script>
+</body>
+</html>

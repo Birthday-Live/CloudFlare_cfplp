@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>漂流瓶管理端</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>🔐 管理端登录</h1>
+  <form id="loginForm">
+    <input type="password" id="password" placeholder="输入管理密码">
+    <br>
+    <button type="submit">登录</button>
+  </form>
+
+  <div id="adminPanel" style="display:none;">
+    <h2>📋 瓶子列表</h2>
+    <button id="listBtn">刷新列表</button>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    let token = null;
+
+    document.getElementById('loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const password = document.getElementById('password').value;
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        body: JSON.stringify({ password })
+      });
+      if (res.status === 200) {
+        token = await res.text();
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+      } else {
+        alert("登录失败");
+      }
+    };
+
+    document.getElementById('listBtn').onclick = async () => {
+      const res = await fetch('/api/admin/list', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const bottles = await res.json();
+      const container = document.getElementById('list');
+      container.innerHTML = '';
+      bottles.forEach(b => {
+        const div = document.createElement('div');
+        div.innerHTML = `<p><strong>ID:</strong> ${b.id}<br><strong>内容:</strong> ${b.content}<br><strong>时间:</strong> ${b.created_at}</p>
+                         <button onclick="deleteBottle('${b.id}')">删除</button>`;
+        container.appendChild(div);
+      });
+    };
+
+    async function deleteBottle(id) {
+      await fetch('/api/admin/delete?id=' + id, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      document.getElementById('listBtn').click();
+    }
+  </script>
+</body>
+</html>
